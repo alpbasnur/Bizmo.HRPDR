@@ -1,0 +1,198 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Ana yüzey */
+    --background: 240 7% 97%;
+    --foreground: 0 0% 7%;
+
+    /* Kartlar & Popover */
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 7%;
+
+    /* Birincil — Zümrüt yeşili (PotansiyelHaritası marka rengi) */
+    --primary: 153 60% 43%;
+    --primary-foreground: 0 0% 100%;
+
+    /* İkincil & Muted */
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 0 0% 7%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 0 0% 44%;
+
+    /* Accent */
+    --accent: 240 5% 96%;
+    --accent-foreground: 0 0% 7%;
+
+    /* Tehlike */
+    --destructive: 4 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Kenarlık & Input */
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 153 60% 43%;
+
+    /* Radius */
+    --radius: 1rem;
+
+    /* Vurgu renkleri */
+    --accent-blue: 153 60% 43%;
+    --accent-green: 142 71% 49%;
+    --accent-red: 4 84% 60%;
+    --accent-orange: 36 100% 50%;
+    --accent-purple: 280 59% 60%;
+    --accent-teal: 199 89% 68%;
+
+    /* Surface */
+    --surface-primary: 240 7% 97%;
+    --surface-elevated: 0 0% 100%;
+    --separator: 0 0% 0% / 0.08;
+
+    /* Sidebar */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5% 26%;
+    --sidebar-primary: 153 60% 43%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 5% 96%;
+    --sidebar-accent-foreground: 240 6% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 153 60% 43%;
+
+    /* Glass */
+    --glass-bg: 0 0% 100% / 0.72;
+    --glass-border: 0 0% 100% / 0.48;
+    --glass-blur: 24px;
+    --glass-saturate: 1.8;
+    --glass-shadow: 0 2px 8px rgba(0, 0, 0, 0.06), 0 12px 40px rgba(0, 0, 0, 0.04);
+    --glass-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.08), 0 16px 48px rgba(0, 0, 0, 0.06);
+    --glass-inset: 0 0 0 0.5px rgba(255, 255, 255, 0.06) inset;
+    --glass-inset-hover: 0 0 0 0.5px rgba(255, 255, 255, 0.1) inset;
+  }
+
+  .dark {
+    --background: 200 13% 5%;
+    --foreground: 160 10% 93%;
+
+    --card: 200 10% 9%;
+    --card-foreground: 160 10% 93%;
+    --popover: 200 10% 9%;
+    --popover-foreground: 160 10% 93%;
+
+    --primary: 153 60% 53%;
+    --primary-foreground: 200 13% 5%;
+
+    --secondary: 200 8% 14%;
+    --secondary-foreground: 160 10% 88%;
+    --muted: 200 8% 14%;
+    --muted-foreground: 200 5% 55%;
+
+    --accent: 200 8% 14%;
+    --accent-foreground: 160 10% 93%;
+
+    --destructive: 4 62% 45%;
+    --destructive-foreground: 0 0% 95%;
+
+    --border: 200 6% 16%;
+    --input: 200 6% 16%;
+    --ring: 153 60% 53%;
+
+    --accent-blue: 211 100% 50%;
+    --accent-green: 153 60% 53%;
+    --accent-red: 4 84% 60%;
+    --accent-orange: 36 100% 50%;
+    --accent-purple: 263 70% 58%;
+    --accent-teal: 172 66% 50%;
+
+    --surface-primary: 200 10% 9%;
+    --surface-elevated: 200 8% 14%;
+    --separator: 153 30% 40% / 0.08;
+
+    --sidebar-background: 200 13% 7%;
+    --sidebar-foreground: 160 10% 88%;
+    --sidebar-primary: 153 60% 53%;
+    --sidebar-primary-foreground: 200 13% 5%;
+    --sidebar-accent: 200 8% 14%;
+    --sidebar-accent-foreground: 160 10% 88%;
+    --sidebar-border: 200 6% 14%;
+    --sidebar-ring: 153 60% 53%;
+
+    --glass-bg: 200 10% 9% / 0.75;
+    --glass-border: 153 30% 40% / 0.10;
+    --glass-blur: 24px;
+    --glass-saturate: 1.6;
+    --glass-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 12px 40px rgba(0, 0, 0, 0.18);
+    --glass-shadow-hover: 0 4px 16px rgba(0, 0, 0, 0.3), 0 16px 48px rgba(0, 0, 0, 0.22);
+    --glass-inset: 0 0 0 0.5px rgba(62, 207, 142, 0.04) inset;
+    --glass-inset-hover: 0 0 0 0.5px rgba(62, 207, 142, 0.08) inset;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+}
+
+@layer components {
+  .glass-surface {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border: 0.5px solid hsl(var(--glass-border));
+    box-shadow: var(--glass-inset), var(--glass-shadow);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .glass-surface:hover {
+    box-shadow: var(--glass-inset-hover), var(--glass-shadow-hover);
+  }
+
+  .glass-surface-static {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border: 0.5px solid hsl(var(--glass-border));
+    box-shadow: var(--glass-inset), var(--glass-shadow);
+  }
+
+  .form-input-base {
+    @apply w-full h-11 rounded-xl bg-muted/50 text-sm
+      placeholder:text-muted-foreground/50
+      focus:outline-none focus:ring-2 focus:ring-primary/30
+      border border-border/50 transition-colors;
+  }
+
+  /* react-day-picker (Calendar) — birincil renkle uyum */
+  .rdp-root {
+    --rdp-accent-color: hsl(var(--primary));
+    --rdp-accent-background-color: hsl(var(--muted));
+  }
+}
+
+@layer utilities {
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "potansiyel-haritasi",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n \"api,web,portal\" -c \"blue,green,cyan\" \"npm run dev -w server\" \"npm run dev -w web\" \"npm run dev -w portal\"",
+    "dev:api": "npm run dev -w server",
+    "dev:web": "npm run dev -w web",
+    "dev:portal": "npm run dev -w portal",
+    "build": "npm run build -w packages/shared && npm run build -w packages/ui && npm run build -w server && npm run build -w web && npm run build -w portal",
+    "lint": "npm run lint --workspaces --if-present",
+    "type-check": "npm run type-check --workspaces --if-present",
+    "db:migrate": "npm run prisma:migrate -w server",
+    "db:seed": "npm run prisma:seed -w server",
+    "db:studio": "npm run prisma:studio -w server",
+    "docker:dev": "docker compose up -d postgres redis",
+    "docker:down": "docker compose down"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

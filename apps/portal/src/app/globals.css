@@ -1,0 +1,72 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 7% 97%;
+    --foreground: 0 0% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 7%;
+    --primary: 153 60% 43%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 0 0% 7%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 0 0% 44%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 4 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 153 60% 43%;
+    --radius: 1rem;
+    --accent-green: 142 71% 49%;
+    --accent-red: 4 84% 60%;
+    --accent-orange: 36 100% 50%;
+    --accent-purple: 280 59% 60%;
+
+    --glass-bg: 0 0% 100% / 0.72;
+    --glass-border: 0 0% 100% / 0.48;
+    --glass-blur: 24px;
+    --glass-saturate: 1.8;
+    --glass-shadow: 0 2px 8px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.04);
+    --glass-shadow-hover: 0 4px 16px rgba(0,0,0,0.08), 0 16px 48px rgba(0,0,0,0.06);
+    --glass-inset: 0 0 0 0.5px rgba(255,255,255,0.06) inset;
+    --glass-inset-hover: 0 0 0 0.5px rgba(255,255,255,0.1) inset;
+  }
+
+  * { @apply border-border; }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+}
+
+@layer components {
+  .glass-surface {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border: 0.5px solid hsl(var(--glass-border));
+    box-shadow: var(--glass-inset), var(--glass-shadow);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .glass-surface:hover { box-shadow: var(--glass-inset-hover), var(--glass-shadow-hover); }
+  .glass-surface-static {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+    border: 0.5px solid hsl(var(--glass-border));
+    box-shadow: var(--glass-inset), var(--glass-shadow);
+  }
+}
+
+@layer utilities {
+  .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  .scrollbar-none::-webkit-scrollbar { display: none; }
+  .tabular-nums { font-variant-numeric: tabular-nums; }
+}
