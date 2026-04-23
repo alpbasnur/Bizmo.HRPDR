@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+
+const inter = Inter({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "PotansiyelHaritası — Yönetim Paneli",
@@ -14,7 +21,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="tr" suppressHydrationWarning>
-      <body className="min-h-screen w-full">
+      <body className={`${inter.className} min-h-screen w-full`}>
         <Providers>{children}</Providers>
       </body>
     </html>

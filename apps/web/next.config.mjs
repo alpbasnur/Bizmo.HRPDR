@@ -2,7 +2,11 @@
 const nextConfig = {
   transpilePackages: ["@ph/ui", "@ph/shared"],
   experimental: {
-    optimizePackageImports: ["lucide-react", "@radix-ui/react-icons"],
+    optimizePackageImports: [
+      "lucide-react",
+      "@radix-ui/react-icons",
+      "framer-motion",
+    ],
   },
 };
 

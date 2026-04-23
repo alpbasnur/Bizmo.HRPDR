@@ -2,6 +2,7 @@ import {
   useQuery,
   useMutation,
   useQueryClient,
+  type UseQueryOptions,
 } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import type { CreatePersonnelInput, UpdatePersonnelInput } from "@ph/shared";
@@ -481,11 +482,24 @@ export function useDeleteAiPromptTemplate() {
 
 /* ─── Notifications ─── */
 
-export function useNotificationList(params: Record<string, unknown> = {}) {
+type PaginatedNotifications = Awaited<
+  ReturnType<typeof getPaginated<NotificationRow>>
+>;
+
+export function useNotificationList<
+  TData = PaginatedNotifications,
+>(
+  params: Record<string, unknown> = {},
+  options?: Omit<
+    UseQueryOptions<PaginatedNotifications, Error, TData>,
+    "queryKey" | "queryFn"
+  >,
+) {
   return useQuery({
     queryKey: ["notifications", params],
     queryFn: () =>
       getPaginated<NotificationRow>("/api/notifications?" + toQS(params)),
+    ...options,
   });
 }
 export function useMarkNotificationRead() {
@@ -778,7 +792,25 @@ export interface ReportRow {
   createdAt: string;
 }
 
-export interface ReportDetail extends ReportRow {
+export interface ReportAnswerRow {
+  id: string;
+  textAnswer: string | null;
+  scaleValue: number | null;
+  choiceKey: string | null;
+  followUpAnswer: string | null;
+  answeredAt: string;
+  durationSec: number | null;
+  question: {
+    text: string;
+    subText: string | null;
+    dimension: string;
+    type: string;
+    phase: string;
+    options: unknown;
+  } | null;
+}
+
+export interface ReportDetail extends Omit<ReportRow, "session" | "personnel"> {
   executiveSummary: string | null;
   fullReportJson: Record<string, unknown> | null;
   pdfUrl: string | null;
@@ -804,8 +836,33 @@ export interface ReportDetail extends ReportRow {
     analysisPipeline: string;
     hrPdrAnalysis?: Record<string, unknown> | null;
     psychologicalAnalysis?: Record<string, unknown> | null;
+    answers?: ReportAnswerRow[];
     assessment: { id: string; title: string; description?: string };
   } | null;
+}
+
+export function useSessionAiAnalysis() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (args: {
+      sessionId: string;
+      reportId?: string;
+      analysisType: "HR_PDR_ANALYSIS" | "PSYCHOLOGICAL_ANALYSIS";
+    }) =>
+      api
+        .post<{ data: Record<string, unknown> }>(
+          `/api/sessions/${args.sessionId}/ai-analysis`,
+          { analysisType: args.analysisType },
+        )
+        .then((r) => r.data.data),
+    onSuccess: (_, args) => {
+      if (args.reportId) {
+        qc.invalidateQueries({ queryKey: ["reports", args.reportId] });
+      }
+      qc.invalidateQueries({ queryKey: ["reports"] });
+      qc.invalidateQueries({ queryKey: ["sessions", args.sessionId] });
+    },
+  });
 }
 
 /* ─── AI Config Types ─── */

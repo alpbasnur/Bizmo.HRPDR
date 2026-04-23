@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { motion } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -72,6 +72,13 @@ function TableRowSkeleton() {
 export default function PersonnelPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const searchDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) clearTimeout(searchDebounceRef.current);
+    };
+  }, []);
 
   const params: PersonnelListParams = useMemo(
     () => ({
@@ -143,11 +150,13 @@ export default function PersonnelPage() {
                 defaultValue={params.search ?? ""}
                 onChange={(e) => {
                   const v = e.target.value;
-                  const timeout = setTimeout(
-                    () => updateFilter("search", v),
-                    400
-                  );
-                  return () => clearTimeout(timeout);
+                  if (searchDebounceRef.current) {
+                    clearTimeout(searchDebounceRef.current);
+                  }
+                  searchDebounceRef.current = setTimeout(() => {
+                    updateFilter("search", v);
+                    searchDebounceRef.current = null;
+                  }, 400);
                 }}
                 className="w-full h-10 pl-9 pr-4 rounded-xl bg-muted/40 border border-border/30 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
               />

@@ -286,7 +286,8 @@ function generateMockQuestions(dimension: string, count: number): Array<Record<s
     ],
   };
 
-  const dimTemplates = templates[dimension] ?? templates.LOGICAL_ALGORITHMIC;
+  const dimTemplates: string[] =
+    templates[dimension] ?? templates.LOGICAL_ALGORITHMIC ?? [];
   const phases: Array<"ICEBREAKER" | "CORE" | "CLOSING"> = ["ICEBREAKER", "CORE", "CORE", "CORE", "CLOSING"];
   const types: Array<"OPEN_ENDED" | "SITUATIONAL" | "BEHAVIORAL"> = ["OPEN_ENDED", "SITUATIONAL", "BEHAVIORAL"];
 

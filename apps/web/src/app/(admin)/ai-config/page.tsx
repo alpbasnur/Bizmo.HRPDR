@@ -737,6 +737,8 @@ const PROMPT_TYPE_META: Record<string, { label: string; icon: React.ElementType;
   PSYCHOLOGICAL_ANALYSIS: { label: "Psikolojik Analiz", icon: Heart, color: "text-purple-500" },
 };
 
+const DEFAULT_PROMPT_TYPE_META = PROMPT_TYPE_META["HR_PDR_ANALYSIS"]!;
+
 function PromptTemplatesSection() {
   const { data: templates, isLoading } = useAiPromptTemplates();
   const { data: defaults } = useAiPromptDefaults();
@@ -816,7 +818,7 @@ function PromptTemplatesSection() {
       ) : (
         <div className="space-y-3">
           {templateList.map((tpl) => {
-            const meta = PROMPT_TYPE_META[tpl.type] ?? PROMPT_TYPE_META.HR_PDR_ANALYSIS;
+            const meta = PROMPT_TYPE_META[tpl.type] ?? DEFAULT_PROMPT_TYPE_META;
             const Icon = meta.icon;
             return (
               <GlassCard key={tpl.id} className="relative">
@@ -968,7 +970,7 @@ function PromptTemplateFormDialog({
 
   if (!open) return null;
 
-  const meta = PROMPT_TYPE_META[promptType] ?? PROMPT_TYPE_META.HR_PDR_ANALYSIS;
+  const meta = PROMPT_TYPE_META[promptType] ?? DEFAULT_PROMPT_TYPE_META;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">

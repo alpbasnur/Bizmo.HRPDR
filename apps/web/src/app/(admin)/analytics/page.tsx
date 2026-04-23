@@ -36,6 +36,27 @@ const ApexChart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 type RadarChartSeries = { name: string; data: number[] }[];
 
+const motionContainer = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.07 },
+  },
+};
+
+const motionItem = {
+  hidden: { opacity: 0, y: 12 },
+  show: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const RADAR_CATEGORIES = ALL_DIMENSIONS.map(
+  (d) => DIMENSION_SHORT_LABELS[d] ?? d,
+);
+
 const DIMENSION_COLORS: Record<string, { bg: string; text: string; stroke: string }> = {
   LOGICAL_ALGORITHMIC: {
     bg: "bg-blue-500/10",
@@ -153,10 +174,6 @@ export default function AnalyticsPage() {
     return m;
   }, [dimensions]);
 
-  const radarCategories = ALL_DIMENSIONS.map(
-    (d) => DIMENSION_SHORT_LABELS[d] ?? d,
-  );
-
   const radarSeries = useMemo(() => {
     const orgData = ALL_DIMENSIONS.map((d) => {
       const stat = dimByKey.get(d);
@@ -216,7 +233,7 @@ export default function AnalyticsPage() {
           },
         },
       },
-      xaxis: { categories: radarCategories },
+      xaxis: { categories: RADAR_CATEGORIES },
       yaxis: {
         show: false,
         max: 10,
@@ -238,7 +255,7 @@ export default function AnalyticsPage() {
         },
       },
     }),
-    [palette, radarCategories],
+    [palette],
   );
 
   const lineSeries = useMemo(() => {
@@ -310,23 +327,6 @@ export default function AnalyticsPage() {
     });
   };
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.07 },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 12 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
-    },
-  };
-
   return (
     <div className="space-y-8 w-full">
       <motion.div
@@ -344,7 +344,7 @@ export default function AnalyticsPage() {
       {/* KPI */}
       <motion.div
         className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"
-        variants={container}
+        variants={motionContainer}
         initial="hidden"
         animate="show"
       >
@@ -357,7 +357,7 @@ export default function AnalyticsPage() {
           ))
         ) : (
           <>
-            <motion.div variants={item}>
+            <motion.div variants={motionItem}>
               <GlassCard hover={false} className="h-full">
                 <div className="flex items-center gap-2 mb-2">
                   <LayoutDashboard className="h-4 w-4 text-primary" />
@@ -376,7 +376,7 @@ export default function AnalyticsPage() {
                 </p>
               </GlassCard>
             </motion.div>
-            <motion.div variants={item}>
+            <motion.div variants={motionItem}>
               <GlassCard hover={false} className="h-full">
                 <div className="flex items-center gap-2 mb-2">
                   <BarChart3 className="h-4 w-4 text-accent-green" />
@@ -392,7 +392,7 @@ export default function AnalyticsPage() {
                 </p>
               </GlassCard>
             </motion.div>
-            <motion.div variants={item}>
+            <motion.div variants={motionItem}>
               <GlassCard hover={false} className="h-full">
                 <div className="flex items-center gap-2 mb-2">
                   <Users className="h-4 w-4 text-accent-purple" />
@@ -408,7 +408,7 @@ export default function AnalyticsPage() {
                 </p>
               </GlassCard>
             </motion.div>
-            <motion.div variants={item}>
+            <motion.div variants={motionItem}>
               <GlassCard hover={false} className="h-full">
                 <div className="flex items-center gap-2 mb-2">
                   <TrendingUp className="h-4 w-4 text-amber-500" />
@@ -460,7 +460,7 @@ export default function AnalyticsPage() {
         ) : (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-5 gap-4"
-            variants={container}
+            variants={motionContainer}
             initial="hidden"
             animate="show"
           >
@@ -471,7 +471,7 @@ export default function AnalyticsPage() {
               const colorBg = colors?.bg ?? "bg-blue-500/10";
               const colorText = colors?.text ?? "text-blue-500";
               return (
-                <motion.div key={dim.dimension} variants={item}>
+                <motion.div key={dim.dimension} variants={motionItem}>
                   <GlassCard className="flex flex-col items-center text-center">
                     <span
                       className={cn(
@@ -911,7 +911,7 @@ export default function AnalyticsPage() {
         ) : (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"
-            variants={container}
+            variants={motionContainer}
             initial="hidden"
             animate="show"
           >
@@ -923,7 +923,7 @@ export default function AnalyticsPage() {
                 completedTests: number;
                 avgScore: number | null;
               }) => (
-                <motion.div key={dept.id ?? dept.name} variants={item}>
+                <motion.div key={dept.id ?? dept.name} variants={motionItem}>
                   <GlassCard>
                     <div className="flex items-start justify-between gap-2">
                       <div className="min-w-0">

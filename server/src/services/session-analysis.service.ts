@@ -1,5 +1,6 @@
 import { prisma } from "../lib/prisma.js";
 import { decrypt } from "../lib/crypto.js";
+import { HttpError } from "../lib/http-error.js";
 import { completeChat } from "../lib/llm.js";
 
 const DEFAULT_HR_PDR_PROMPT = `Sen deneyimli bir İnsan Kaynakları uzmanısın. Görevin, bir çalışanın performans değerlendirme oturumundaki cevaplarını analiz ederek kapsamlı bir HR PDR (Performans Değerlendirme Raporu) hazırlamaktır.
@@ -119,8 +120,29 @@ export async function runSessionAnalysis(params: {
     },
   });
 
-  if (!session) throw new Error("Oturum bulunamadı");
-  if (session.answers.length === 0) throw new Error("Bu oturumda henüz cevap yok");
+  if (!session) throw new HttpError("Oturum bulunamadı", 404, "NOT_FOUND");
+
+  let answersFormatted = formatAnswersForAi(session.answers);
+  if (!answersFormatted.trim()) {
+    const ds = session.dimensionScores;
+    const hasScores =
+      ds &&
+      typeof ds === "object" &&
+      Object.keys(ds as Record<string, unknown>).length > 0;
+    if (hasScores) {
+      answersFormatted =
+        "(Bu oturumda soru metni cevapları veritabanında yok; boyut skorları ve özet kullanılıyor.)\n\n" +
+        `Boyut skorları: ${JSON.stringify(ds)}\n` +
+        (session.keyInsights ? `\nÖne çıkan içgörü: ${session.keyInsights}` : "");
+    }
+  }
+  if (!answersFormatted.trim()) {
+    throw new HttpError(
+      "Bu oturumda analiz için veri yok: kayıtlı soru cevabı veya boyut skoru bulunamadı.",
+      400,
+      "NO_SESSION_DATA",
+    );
+  }
 
   const aiConfig = await prisma.aiConfig.findFirst({
     where: { organizationId, isActive: true },
@@ -128,7 +150,11 @@ export async function runSessionAnalysis(params: {
   });
 
   if (!aiConfig) {
-    throw new Error("Aktif AI yapılandırması yok. AI Yapılandırması sayfasından bir sağlayıcı ekleyin.");
+    throw new HttpError(
+      "Aktif AI yapılandırması yok. AI Yapılandırması sayfasından bir sağlayıcı ekleyin.",
+      400,
+      "NO_AI_CONFIG",
+    );
   }
 
   const promptTemplate = await prisma.aiPromptTemplate.findFirst({
@@ -145,8 +171,6 @@ export async function runSessionAnalysis(params: {
 Pozisyon: ${session.personnel.position}
 Deneyim: ${session.personnel.experienceYear} yıl
 Değerlendirme: ${session.assessment.title}`;
-
-  const answersFormatted = formatAnswersForAi(session.answers);
 
   const userMessage = `${personnelInfo}\n\n--- CEVAPLAR ---\n\n${answersFormatted}`;
 
@@ -176,7 +200,7 @@ Değerlendirme: ${session.assessment.title}`;
   try {
     parsed = JSON.parse(extractJson(raw));
   } catch {
-    throw new Error("AI yanıtı geçerli JSON değil");
+    throw new HttpError("AI yanıtı geçerli JSON değil", 502, "AI_INVALID_JSON");
   }
 
   const field = analysisType === "HR_PDR_ANALYSIS" ? "hrPdrAnalysis" : "psychologicalAnalysis";

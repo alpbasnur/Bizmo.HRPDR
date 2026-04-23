@@ -127,19 +127,27 @@ export function GlassTopbar() {
   const [paletteQ, setPaletteQ] = useState("");
   const [paletteIndex, setPaletteIndex] = useState(0);
   const paletteInputRef = useRef<HTMLInputElement>(null);
-  const { user, clearAuth } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
+  const clearAuth = useAuthStore((s) => s.clearAuth);
   const router = useRouter();
 
-  const { data: unreadMeta } = useNotificationList({
-    unreadOnly: true,
-    pageSize: 1,
-  });
-  const { data: notifPreview, isLoading: notifLoading } = useNotificationList({
-    pageSize: 8,
-  });
+  const notifParams = useMemo(() => ({ pageSize: 8 }), []);
+  const { data: notifBundle, isLoading: notifLoading } = useNotificationList(
+    notifParams,
+    {
+      select: (data) => ({
+        previewItems: data.items,
+        unreadCount: data.items.reduce(
+          (acc, n) => acc + (n.readAt ? 0 : 1),
+          0,
+        ),
+      }),
+    },
+  );
   const markRead = useMarkNotificationRead();
 
-  const unreadCount = unreadMeta?.total ?? 0;
+  const notifPreview = notifBundle?.previewItems;
+  const unreadCount = notifBundle?.unreadCount ?? 0;
 
   useEffect(() => {
     const stored = localStorage.getItem("theme");
@@ -356,12 +364,12 @@ export function GlassTopbar() {
                         <div className="flex justify-center py-8">
                           <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                         </div>
-                      ) : (notifPreview?.items ?? []).length === 0 ? (
+                      ) : (notifPreview ?? []).length === 0 ? (
                         <p className="text-sm text-muted-foreground text-center py-8 px-3">
                           Bildirim yok
                         </p>
                       ) : (
-                        (notifPreview?.items ?? []).map((n) => (
+                        (notifPreview ?? []).map((n) => (
                           <button
                             key={n.id}
                             type="button"

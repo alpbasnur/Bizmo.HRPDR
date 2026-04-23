@@ -25,7 +25,7 @@ interface NotificationUi {
 }
 
 export default function SettingsPage() {
-  const { user } = useAuthStore();
+  const user = useAuthStore((s) => s.user);
 
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");

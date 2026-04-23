@@ -617,7 +617,7 @@ function AddQuestionDialog({
   questionSetId: string;
 }) {
   const [tab, setTab] = useState<AddTab>("pool");
-  const [aiDimension, setAiDimension] = useState<string>(ALL_DIMENSIONS[0]);
+  const [aiDimension, setAiDimension] = useState<string>(ALL_DIMENSIONS[0]!);
   const [aiTypes, setAiTypes] = useState<string[]>([]);
   const [aiCount, setAiCount] = useState(5);
   const [aiContext, setAiContext] = useState("");

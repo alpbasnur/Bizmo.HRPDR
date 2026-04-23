@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from "fastify";
 import { prisma } from "../../lib/prisma.js";
 import { runSessionAnalysis } from "../../services/session-analysis.service.js";
+import { isHttpError } from "../../lib/http-error.js";
 
 const DEFAULT_PAGE_SIZE = 20;
 const MAX_PAGE_SIZE = 100;
@@ -157,6 +158,13 @@ export const sessionAdminRoutes: FastifyPluginAsync = async (fastify) => {
 
       return reply.send({ data: result });
     } catch (err) {
+      if (isHttpError(err)) {
+        return reply.status(err.statusCode).send({
+          code: err.code ?? "REQUEST_ERROR",
+          message: err.message,
+          traceId: request.traceId,
+        });
+      }
       const message = err instanceof Error ? err.message : "AI analizi sırasında hata oluştu";
       request.log.error(err);
       return reply.status(500).send({
